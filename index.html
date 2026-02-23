@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy 17th Birthday!</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Canvas Confetti Library -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <style>
+        /* CSS Variables for Theme */
+        :root {
+            --neon-pink: #ff007f;
+            --electric-blue: #00f2ff;
+            --deep-purple: #2d004d;
+            --dark-bg: #0f001a;
+            --white: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--dark-bg);
+            color: var(--white);
+            font-family: 'Orbitron', sans-serif;
+            overflow-x: hidden;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        /* Halftone Comic Background Effect */
+        .halftone-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: 
+                radial-gradient(circle at center, transparent 0%, var(--dark-bg) 100%),
+                radial-gradient(circle, var(--deep-purple) 10%, transparent 20%),
+                radial-gradient(circle, var(--deep-purple) 10%, transparent 20%);
+            background-size: 100% 100%, 12px 12px, 12px 12px;
+            background-position: 0 0, 0 0, 6px 6px;
+            opacity: 0.4;
+            z-index: -2;
+            pointer-events: none;
+        }
+
+        /* Interactive Web Canvas */
+        #web-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* Main Container */
+        .container {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            padding: 2rem;
+            max-width: 800px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        /* Glitch 17 Text */
+        .glitch-container {
+            position: relative;
+        }
+
+        .glitch {
+            font-family: 'Bangers', cursive;
+            font-size: 8rem;
+            font-weight: normal;
+            position: relative;
+            color: var(--white);
+            letter-spacing: 5px;
+            line-height: 1;
+            margin-bottom: -10px;
+            text-shadow: 0 0 20px rgba(255, 0, 127, 0.5);
+        }
+
+        .glitch::before,
+        .glitch::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--dark-bg);
+        }
+
+        .glitch::before {
+            left: 4px;
+            text-shadow: -4px 0 var(--neon-pink);
+            clip: rect(44px, 450px, 56px, 0);
+            animation: glitch-anim 3s infinite linear alternate-reverse;
+        }
+
+        .glitch::after {
+            left: -4px;
+            text-shadow: -4px 0 var(--electric-blue);
+            clip: rect(44px, 450px, 56px, 0);
+            animation: glitch-anim2 2.5s infinite linear alternate-reverse;
+        }
+
+        @keyframes glitch-anim {
+            0% { clip: rect(12px, 9999px, 81px, 0); transform: skew(0.2deg); }
+            5% { clip: rect(72px, 9999px, 34px, 0); transform: skew(0.1deg); }
+            10% { clip: rect(13px, 9999px, 91px, 0); transform: skew(0.5deg); }
+            15% { clip: rect(45px, 9999px, 23px, 0); transform: skew(0.8deg); }
+            20% { clip: rect(89px, 9999px, 56px, 0); transform: skew(0.3deg); }
+            25% { clip: rect(23px, 9999px, 12px, 0); transform: skew(0.5deg); }
+            30% { clip: rect(67px, 9999px, 78px, 0); transform: skew(0.1deg); }
+            35% { clip: rect(34px, 9999px, 45px, 0); transform: skew(0.9deg); }
+            40% { clip: rect(91px, 9999px, 67px, 0); transform: skew(0.4deg); }
+            45% { clip: rect(12px, 9999px, 89px, 0); transform: skew(0.2deg); }
+            50% { clip: rect(56px, 9999px, 23px, 0); transform: skew(0.6deg); }
+            55% { clip: rect(78px, 9999px, 12px, 0); transform: skew(0.8deg); }
+            60% { clip: rect(34px, 9999px, 45px, 0); transform: skew(0.1deg); }
+            65% { clip: rect(89px, 9999px, 67px, 0); transform: skew(0.5deg); }
+            70% { clip: rect(23px, 9999px, 89px, 0); transform: skew(0.3deg); }
+            75% { clip: rect(67px, 9999px, 12px, 0); transform: skew(0.9deg); }
+            80% { clip: rect(12px, 9999px, 45px, 0); transform: skew(0.4deg); }
+            85% { clip: rect(45px, 9999px, 78px, 0); transform: skew(0.2deg); }
+            90% { clip: rect(89px, 9999px, 23px, 0); transform: skew(0.6deg); }
+            95% { clip: rect(23px, 9999px, 56px, 0); transform: skew(0.8deg); }
+            100% { clip: rect(67px, 9999px, 89px, 0); transform: skew(0.1deg); }
+        }
+
+        @keyframes glitch-anim2 {
+            0% { clip: rect(65px, 9999px, 100px, 0); transform: skew(0.8deg); }
+            5% { clip: rect(2px, 9999px, 54px, 0); transform: skew(0.3deg); }
+            10% { clip: rect(83px, 9999px, 11px, 0); transform: skew(0.5deg); }
+            15% { clip: rect(35px, 9999px, 83px, 0); transform: skew(0.2deg); }
+            20% { clip: rect(99px, 9999px, 36px, 0); transform: skew(0.9deg); }
+            25% { clip: rect(13px, 9999px, 62px, 0); transform: skew(0.4deg); }
+            30% { clip: rect(57px, 9999px, 98px, 0); transform: skew(0.6deg); }
+            35% { clip: rect(24px, 9999px, 15px, 0); transform: skew(0.1deg); }
+            40% { clip: rect(81px, 9999px, 57px, 0); transform: skew(0.8deg); }
+            45% { clip: rect(12px, 9999px, 89px, 0); transform: skew(0.3deg); }
+            50% { clip: rect(66px, 9999px, 23px, 0); transform: skew(0.5deg); }
+            55% { clip: rect(78px, 9999px, 12px, 0); transform: skew(0.2deg); }
+            60% { clip: rect(34px, 9999px, 45px, 0); transform: skew(0.9deg); }
+            65% { clip: rect(89px, 9999px, 67px, 0); transform: skew(0.4deg); }
+            70% { clip: rect(23px, 9999px, 89px, 0); transform: skew(0.6deg); }
+            75% { clip: rect(67px, 9999px, 12px, 0); transform: skew(0.1deg); }
+            80% { clip: rect(12px, 9999px, 45px, 0); transform: skew(0.8deg); }
+            85% { clip: rect(45px, 9999px, 78px, 0); transform: skew(0.3deg); }
+            90% { clip: rect(89px, 9999px, 23px, 0); transform: skew(0.5deg); }
+            95% { clip: rect(23px, 9999px, 56px, 0); transform: skew(0.2deg); }
+            100% { clip: rect(67px, 9999px, 89px, 0); transform: skew(0.9deg); }
+        }
+
+        h1.subtitle {
+            font-family: 'Bangers', cursive;
+            font-size: 3rem;
+            letter-spacing: 2px;
+            color: var(--white);
+            text-shadow: 2px 2px 0px var(--neon-pink), -2px -2px 0px var(--electric-blue);
+            transform: rotate(-2deg);
+        }
+
+        /* Stylized Gwen Stacy Character */
+        .character-container {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            animation: float 4s ease-in-out infinite;
+            filter: drop-shadow(0 0 15px rgba(0, 242, 255, 0.5));
+            margin: 1rem 0;
+        }
+
+        .spider-web-line {
+            position: absolute;
+            top: -150px;
+            left: 50%;
+            width: 2px;
+            height: 200px;
+            background: linear-gradient(to bottom, transparent, var(--white));
+            transform: translateX(-50%);
+            z-index: -1;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(3deg); }
+            100% { transform: translateY(0px) rotate(0deg); }
+        }
+
+        /* Glassmorphism Message Box */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-right: 1px solid rgba(0, 242, 255, 0.4);
+            border-bottom: 1px solid rgba(255, 0, 127, 0.4);
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37), 
+                        inset 0 0 20px rgba(0, 242, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px 0 rgba(0, 0, 0, 0.5), 
+                        inset 0 0 30px rgba(255, 0, 127, 0.2);
+        }
+
+        /* Birthday Balloons */
+        .balloons-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .balloon {
+            position: absolute;
+            bottom: -150px;
+            width: 50px;
+            height: 65px;
+            border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
+            opacity: 0.7;
+            animation: floatUp 12s infinite ease-in;
+            box-shadow: inset -5px -5px 15px rgba(0,0,0,0.3);
+        }
+
+        .balloon::before {
+            content: "";
+            position: absolute;
+            bottom: -50px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 2px;
+            height: 50px;
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .balloon.pink1 { background: var(--neon-pink); box-shadow: 0 0 20px var(--neon-pink); left: 15%; animation-duration: 14s; }
+        .balloon.blue1 { background: var(--electric-blue); box-shadow: 0 0 20px var(--electric-blue); left: 85%; animation-duration: 11s; animation-delay: 2s; }
+        .balloon.purple1 { background: var(--deep-purple); box-shadow: 0 0 20px var(--deep-purple); left: 50%; animation-duration: 16s; animation-delay: 5s; }
+        .balloon.pink2 { background: var(--neon-pink); box-shadow: 0 0 20px var(--neon-pink); left: 70%; animation-duration: 13s; animation-delay: 7s; }
+        .balloon.blue2 { background: var(--electric-blue); box-shadow: 0 0 20px var(--electric-blue); left: 30%; animation-duration: 15s; animation-delay: 4s; }
+
+        @keyframes floatUp {
+            0% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-60vh) rotate(15deg); }
+            100% { transform: translateY(-120vh) rotate(-15deg); }
+        }
+
+        /* Interactive Cake */
+        .interactive-cake {
+            font-size: 3rem;
+            margin-top: 1rem;
+            cursor: pointer;
+            transition: transform 0.2s, filter 0.2s;
+            display: inline-block;
+            filter: drop-shadow(0 0 10px rgba(255, 0, 127, 0.8));
+            animation: pulse 2s infinite;
+        }
+
+        .interactive-cake:hover {
+            transform: scale(1.2) rotate(-5deg);
+            filter: drop-shadow(0 0 20px rgba(0, 242, 255, 0.9));
+        }
+
+        .cake-text {
+            display: block;
+            font-size: 0.9rem;
+            color: var(--electric-blue);
+            margin-top: 5px;
+            letter-spacing: 1px;
+            text-shadow: none;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .glass-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%);
+            opacity: 0;
+            transition: opacity 0.5s;
+            pointer-events: none;
+        }
+
+        .glass-card:hover::before {
+            opacity: 1;
+        }
+
+        .message-text {
+            font-size: 1.2rem;
+            line-height: 1.8;
+            font-weight: 400;
+            letter-spacing: 1px;
+            text-align: left;
+            position: relative;
+            z-index: 1;
+        }
+
+        .message-text span.highlight {
+            color: var(--neon-pink);
+            font-weight: 700;
+            text-shadow: 0 0 10px rgba(255, 0, 127, 0.6);
+        }
+
+        .message-text span.highlight-blue {
+            color: var(--electric-blue);
+            font-weight: 700;
+            text-shadow: 0 0 10px rgba(0, 242, 255, 0.6);
+        }
+
+        /* Music Player Button */
+        .music-player {
+            margin-top: 1rem;
+            z-index: 20;
+        }
+
+        .btn-play {
+            background: transparent;
+            color: var(--white);
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 900;
+            font-size: 1.1rem;
+            padding: 1rem 2rem;
+            border: 2px solid var(--electric-blue);
+            border-radius: 50px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 15px rgba(0, 242, 255, 0.3), inset 0 0 10px rgba(0, 242, 255, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-play::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 0, 127, 0.4), transparent);
+            transition: left 0.5s ease;
+            z-index: -1;
+        }
+
+        .btn-play:hover {
+            border-color: var(--neon-pink);
+            box-shadow: 0 0 20px rgba(255, 0, 127, 0.5), inset 0 0 15px rgba(255, 0, 127, 0.2);
+            text-shadow: 0 0 5px var(--white);
+            transform: scale(1.05);
+        }
+
+        .btn-play:hover::before {
+            left: 100%;
+        }
+
+        .icon-play {
+            display: inline-block;
+            width: 0;
+            height: 0;
+            border-style: solid;
+            border-width: 8px 0 8px 14px;
+            border-color: transparent transparent transparent var(--white);
+            transition: all 0.3s;
+        }
+
+        .btn-play.playing .icon-play {
+            border-style: double;
+            border-width: 0 0 0 14px;
+            height: 16px;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .glitch { font-size: 6rem; }
+            h1.subtitle { font-size: 2.2rem; }
+            .glass-card { padding: 1.5rem; }
+            .message-text { font-size: 1rem; }
+            .character-container { width: 150px; height: 150px; }
+            .spider-web-line { height: 150px; top: -110px; }
+            .balloon { width: 35px; height: 45px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Background Effects -->
+    <div class="halftone-bg"></div>
+    <canvas id="web-canvas"></canvas>
+    
+    <!-- Neon Birthday Balloons -->
+    <div class="balloons-container">
+        <div class="balloon pink1"></div>
+        <div class="balloon blue1"></div>
+        <div class="balloon purple1"></div>
+        <div class="balloon pink2"></div>
+        <div class="balloon blue2"></div>
+    </div>
+
+    <!-- Hidden Audio Element -->
+    <!-- Updated with a working, upbeat royalty-free hip-hop track -->
+    <audio id="bgm" loop crossorigin="anonymous">
+        <source src="song.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+
+    <div class="container">
+        <!-- Header -->
+        <div class="glitch-container">
+            <div class="glitch" data-text="17">17</div>
+        </div>
+        <h1 class="subtitle">Happy Birthday!</h1>
+
+        <!-- Stylized Character (SVG inline to ensure it always loads) -->
+        <div class="character-container" id="gwen-character">
+            <div class="spider-web-line"></div>
+            <!-- Abstract Cyberpunk/Spider-Gwen Vector Silhouette -->
+            <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <linearGradient id="gwen-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#ffffff" />
+                        <stop offset="50%" stop-color="#e0e0e0" />
+                        <stop offset="100%" stop-color="#cccccc" />
+                    </linearGradient>
+                    <filter id="chromatic">
+                        <feOffset dx="3" dy="0" in="SourceGraphic" result="red-shift" />
+                        <feColorMatrix type="matrix" values="1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.7 0" in="red-shift" result="red" />
+                        <feOffset dx="-3" dy="0" in="SourceGraphic" result="blue-shift" />
+                        <feColorMatrix type="matrix" values="0 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.7 0" in="blue-shift" result="blue" />
+                        <feMerge>
+                            <feMergeNode in="red" />
+                            <feMergeNode in="blue" />
+                            <feMergeNode in="SourceGraphic" />
+                        </feMerge>
+                    </filter>
+                </defs>
+                <g filter="url(#chromatic)">
+                    <!-- Hood & Head -->
+                    <path d="M100 20 C 70 20, 60 50, 70 80 C 80 110, 120 110, 130 80 C 140 50, 130 20, 100 20 Z" fill="url(#gwen-grad)"/>
+                    <!-- Eye Accents (Pink/Blue) -->
+                    <path d="M 85 60 Q 95 55 95 65 Q 90 70 80 65 Q 75 60 85 60 Z" fill="#ff007f"/>
+                    <path d="M 115 60 Q 105 55 105 65 Q 110 70 120 65 Q 125 60 115 60 Z" fill="#ff007f"/>
+                    <!-- Body Dynamic Pose -->
+                    <path d="M 85 100 L 60 140 L 70 190 L 95 150 L 105 150 L 130 190 L 140 140 L 115 100 Z" fill="url(#gwen-grad)"/>
+                    <!-- Arm swinging -->
+                    <path d="M 75 110 L 40 80 L 30 90 L 65 125 Z" fill="#00f2ff"/>
+                    <path d="M 125 110 L 160 80 L 170 90 L 135 125 Z" fill="#00f2ff"/>
+                </g>
+            </svg>
+        </div>
+
+        <!-- Message Box -->
+        <div class="glass-card">
+            <p class="message-text">
+                <span class="highlight">Happy 17th Birthday!</span><br><br>
+                Apologies for being a little late. I got too swamped with stuff and <span class="highlight-blue">time zones</span> are a real bitch.<br><br>
+                Love ya!
+            </p>
+            
+            <!-- Interactive Birthday Cake -->
+            <div class="interactive-cake" onclick="makeWish(this)" title="Click to make a wish!">
+                🎂
+                <span class="cake-text">Tap to make a wish!</span>
+            </div>
+        </div>
+
+        <!-- Audio Control -->
+        <div class="music-player">
+            <button class="btn-play" id="playBtn" onclick="toggleAudio()">
+                <span class="icon-play"></span>
+                <span id="playText">Play Birthday Beats</span>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // --- 1. Confetti Effect on Load ---
+        window.addEventListener('load', () => {
+            // Spider-Verse color palette confetti
+            const duration = 3000;
+            const end = Date.now() + duration;
+
+            (function frame() {
+                confetti({
+                    particleCount: 5,
+                    angle: 60,
+                    spread: 55,
+                    origin: { x: 0, y: 0.8 },
+                    colors: ['#ff007f', '#00f2ff', '#ffffff', '#2d004d']
+                });
+                confetti({
+                    particleCount: 5,
+                    angle: 120,
+                    spread: 55,
+                    origin: { x: 1, y: 0.8 },
+                    colors: ['#ff007f', '#00f2ff', '#ffffff', '#2d004d']
+                });
+
+                if (Date.now() < end) {
+                    requestAnimationFrame(frame);
+                }
+            }());
+        });
+
+        // --- 2. Audio Player Logic ---
+        const audio = document.getElementById('bgm');
+        const playBtn = document.getElementById('playBtn');
+        const playText = document.getElementById('playText');
+        let isPlaying = false;
+
+        audio.volume = 0.5; // Set starting volume
+
+        function toggleAudio() {
+            if (isPlaying) {
+                audio.pause();
+                playBtn.classList.remove('playing');
+                playText.innerText = 'Play Birthday Beats';
+            } else {
+                audio.play().catch(e => console.log("Audio play failed (browser policy):", e));
+                playBtn.classList.add('playing');
+                playText.innerText = 'Pause Beats';
+                
+                // Extra click burst confetti
+                confetti({
+                    particleCount: 50,
+                    spread: 80,
+                    origin: { y: 0.9 },
+                    colors: ['#ff007f', '#00f2ff']
+                });
+            }
+            isPlaying = !isPlaying;
+        }
+
+        // --- 2.5 Make a Wish Interaction ---
+        function makeWish(element) {
+            element.querySelector('.cake-text').innerText = "Wish granted! ✨";
+            element.style.animation = "none"; // Stop pulsing
+            element.style.transform = "scale(1.2)";
+            
+            // Massive Birthday Confetti Explosion
+            var duration = 2000;
+            var animationEnd = Date.now() + duration;
+            var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 100 };
+
+            function randomInRange(min, max) {
+                return Math.random() * (max - min) + min;
+            }
+
+            var interval = setInterval(function() {
+                var timeLeft = animationEnd - Date.now();
+
+                if (timeLeft <= 0) {
+                    return clearInterval(interval);
+                }
+
+                var particleCount = 50 * (timeLeft / duration);
+                
+                confetti(Object.assign({}, defaults, { 
+                    particleCount, 
+                    origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 },
+                    colors: ['#ff007f', '#00f2ff', '#ffffff']
+                }));
+                confetti(Object.assign({}, defaults, { 
+                    particleCount, 
+                    origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 },
+                    colors: ['#ff007f', '#00f2ff', '#2d004d']
+                }));
+            }, 250);
+        }
+
+        // --- 3. Interactive Spider-Web Canvas System ---
+        const canvas = document.getElementById('web-canvas');
+        const ctx = canvas.getContext('2d');
+        
+        let width, height;
+        let particles = [];
+        
+        // Mouse/Touch tracking
+        const mouse = { x: null, y: null, radius: 150 };
+
+        function initCanvas() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+            particles = [];
+            
+            // Adjust particle count based on screen size for performance
+            const numberOfParticles = (width * height) / 10000; 
+            
+            for (let i = 0; i < numberOfParticles; i++) {
+                particles.push(new Particle());
+            }
+        }
+
+        window.addEventListener('resize', initCanvas);
+
+        // Track mouse/touch
+        window.addEventListener('mousemove', (e) => {
+            mouse.x = e.x;
+            mouse.y = e.y;
+        });
+
+        window.addEventListener('touchmove', (e) => {
+            mouse.x = e.touches[0].clientX;
+            mouse.y = e.touches[0].clientY;
+        });
+
+        window.addEventListener('mouseout', () => {
+            mouse.x = undefined;
+            mouse.y = undefined;
+        });
+        
+        window.addEventListener('touchend', () => {
+            mouse.x = undefined;
+            mouse.y = undefined;
+        });
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.vx = (Math.random() - 0.5) * 1;
+                this.vy = (Math.random() - 0.5) * 1;
+                this.size = Math.random() * 2 + 1;
+                // Randomly assign Pink or Blue theme to particle
+                this.color = Math.random() > 0.5 ? '#00f2ff' : '#ff007f'; 
+            }
+
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+
+                // Bounce off edges
+                if (this.x < 0 || this.x > width) this.vx = -this.vx;
+                if (this.y < 0 || this.y > height) this.vy = -this.vy;
+
+                // Mouse interactivity (web pulling effect)
+                if (mouse.x != null && mouse.y != null) {
+                    let dx = mouse.x - this.x;
+                    let dy = mouse.y - this.y;
+                    let distance = Math.sqrt(dx * dx + dy * dy);
+                    
+                    if (distance < mouse.radius) {
+                        // Subtle attraction to mouse
+                        const forceDirectionX = dx / distance;
+                        const forceDirectionY = dy / distance;
+                        const force = (mouse.radius - distance) / mouse.radius;
+                        
+                        this.vx += forceDirectionX * force * 0.05;
+                        this.vy += forceDirectionY * force * 0.05;
+                        
+                        // Apply friction to prevent infinite acceleration
+                        this.vx *= 0.98;
+                        this.vy *= 0.98;
+                    }
+                }
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.fill();
+            }
+        }
+
+        function animateCanvas() {
+            ctx.clearRect(0, 0, width, height);
+            
+            for (let i = 0; i < particles.length; i++) {
+                particles[i].update();
+                particles[i].draw();
+                
+                // Draw connecting webs
+                for (let j = i; j < particles.length; j++) {
+                    let dx = particles[i].x - particles[j].x;
+                    let dy = particles[i].y - particles[j].y;
+                    let distance = Math.sqrt(dx * dx + dy * dy);
+                    
+                    if (distance < 100) {
+                        ctx.beginPath();
+                        ctx.strokeStyle = `rgba(255, 255, 255, ${1 - distance/100})`;
+                        ctx.lineWidth = 0.5;
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.stroke();
+                        ctx.closePath();
+                    }
+                }
+                
+                // Connect to mouse if close enough
+                if (mouse.x != null && mouse.y != null) {
+                    let dx = particles[i].x - mouse.x;
+                    let dy = particles[i].y - mouse.y;
+                    let distance = Math.sqrt(dx * dx + dy * dy);
+                    
+                    if (distance < mouse.radius) {
+                        ctx.beginPath();
+                        // Pink/Blue glowing line connecting to cursor
+                        ctx.strokeStyle = particles[i].color;
+                        ctx.globalAlpha = 1 - (distance / mouse.radius);
+                        ctx.lineWidth = 1.5;
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(mouse.x, mouse.y);
+                        ctx.stroke();
+                        ctx.globalAlpha = 1.0; // Reset
+                        ctx.closePath();
+                    }
+                }
+            }
+            requestAnimationFrame(animateCanvas);
+        }
+
+        // Initialize and start animation
+        initCanvas();
+        animateCanvas();
+
+        // Extra web burst on click anywhere
+        window.addEventListener('click', (e) => {
+            // Ignore if clicking the button
+            if(e.target.closest('.btn-play')) return;
+            
+            const burstCount = 10;
+            for(let i=0; i<burstCount; i++) {
+                let p = new Particle();
+                p.x = e.clientX;
+                p.y = e.clientY;
+                // Explode outwards
+                p.vx = (Math.random() - 0.5) * 10;
+                p.vy = (Math.random() - 0.5) * 10;
+                particles.push(p);
+            }
+            // Remove particles after a while to prevent lag
+            setTimeout(() => {
+                particles.splice(particles.length - burstCount, burstCount);
+            }, 2000);
+        });
+
+    </script>
+</body>
+</html>
