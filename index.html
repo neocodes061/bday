@@ -1,786 +1,574 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Happy 17th Birthday!</title>
-    
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
-    
-    <!-- Canvas Confetti Library -->
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Happy Birthday Komal! 🎉</title>
+  <link href="https://fonts.googleapis.com/css2?family=Yatra+One&family=Poppins:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    <style>
-        /* CSS Variables for Theme */
-        :root {
-            --neon-pink: #ff007f;
-            --electric-blue: #00f2ff;
-            --deep-purple: #2d004d;
-            --dark-bg: #0f001a;
-            --white: #ffffff;
-        }
+    :root {
+      --saffron: #FF7A00;
+      --gold:    #FFB800;
+      --cream:   #FFF8EE;
+      --dark:    #1A0900;
+      --bg:      #120600;
+      --muted:   rgba(255,248,238,.55);
+    }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+    body {
+      background: var(--bg);
+      color: var(--cream);
+      font-family: 'Poppins', sans-serif;
+      overflow-x: hidden;
+    }
 
-        body {
-            background-color: var(--dark-bg);
-            color: var(--white);
-            font-family: 'Orbitron', sans-serif;
-            overflow-x: hidden;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-        }
+    canvas { position: fixed; inset: 0; pointer-events: none; }
+    #spark-canvas { z-index: 0; }
+    #burst-canvas { z-index: 3; }
 
-        /* Halftone Comic Background Effect */
-        .halftone-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: 
-                radial-gradient(circle at center, transparent 0%, var(--dark-bg) 100%),
-                radial-gradient(circle, var(--deep-purple) 10%, transparent 20%),
-                radial-gradient(circle, var(--deep-purple) 10%, transparent 20%);
-            background-size: 100% 100%, 12px 12px, 12px 12px;
-            background-position: 0 0, 0 0, 6px 6px;
-            opacity: 0.4;
-            z-index: -2;
-            pointer-events: none;
-        }
+    /* ── HERO ── */
+    .hero {
+      position: relative; z-index: 1;
+      min-height: 100vh;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center; padding: 2rem 1.5rem;
+    }
+    .hero::before {
+      content: ''; position: absolute; inset: 0; pointer-events: none;
+      background: radial-gradient(ellipse 65% 50% at 50% 50%, rgba(255,122,0,.15) 0%, transparent 70%);
+    }
 
-        /* Interactive Web Canvas */
-        #web-canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            z-index: -1;
-            pointer-events: none;
-        }
+    .tag {
+      font-size: .82rem; letter-spacing: .25em; text-transform: uppercase;
+      color: var(--gold); opacity: 0; animation: up .7s .2s forwards;
+      margin-bottom: .8rem;
+    }
 
-        /* Main Container */
-        .container {
-            position: relative;
-            z-index: 10;
-            text-align: center;
-            padding: 2rem;
-            max-width: 800px;
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 2rem;
-        }
+    .hero-name {
+      font-family: 'Yatra One', cursive;
+      font-size: clamp(5rem, 18vw, 13rem);
+      line-height: .95;
+      background: linear-gradient(150deg, var(--cream) 10%, var(--gold) 50%, var(--saffron) 90%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+      opacity: 0; animation: up .9s .4s forwards;
+    }
 
-        /* Glitch 17 Text */
-        .glitch-container {
-            position: relative;
-        }
+    .hero-hb {
+      font-family: 'Yatra One', cursive;
+      font-size: clamp(1.3rem, 4vw, 2.6rem);
+      color: var(--gold);
+      opacity: 0; animation: up .8s .65s forwards;
+      margin-top: .3rem;
+    }
 
-        .glitch {
-            font-family: 'Bangers', cursive;
-            font-size: 8rem;
-            font-weight: normal;
-            position: relative;
-            color: var(--white);
-            letter-spacing: 5px;
-            line-height: 1;
-            margin-bottom: -10px;
-            text-shadow: 0 0 20px rgba(255, 0, 127, 0.5);
-        }
+    .divider {
+      display: flex; align-items: center; gap: .9rem;
+      margin: 1.8rem auto; width: min(340px, 80vw);
+      opacity: 0; animation: fadeIn .8s 1s forwards;
+    }
+    .divider::before, .divider::after {
+      content: ''; flex: 1; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    }
+    .divider span { font-size: 1.3rem; }
 
-        .glitch::before,
-        .glitch::after {
-            content: attr(data-text);
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: var(--dark-bg);
-        }
+    .hero-msg {
+      font-size: clamp(.9rem, 2.2vw, 1.15rem);
+      font-weight: 300; color: var(--muted);
+      max-width: 440px; line-height: 1.85;
+      opacity: 0; animation: up .8s 1.2s forwards;
+    }
 
-        .glitch::before {
-            left: 4px;
-            text-shadow: -4px 0 var(--neon-pink);
-            clip: rect(44px, 450px, 56px, 0);
-            animation: glitch-anim 3s infinite linear alternate-reverse;
-        }
+    .arrow {
+      position: absolute; bottom: 2rem;
+      font-size: 1.4rem; color: var(--gold);
+      opacity: 0; animation: fadeIn 1s 2s forwards, bob 1.8s 2s ease-in-out infinite;
+    }
+    @keyframes bob { 0%,100%{transform:translateY(0)} 50%{transform:translateY(8px)} }
 
-        .glitch::after {
-            left: -4px;
-            text-shadow: -4px 0 var(--electric-blue);
-            clip: rect(44px, 450px, 56px, 0);
-            animation: glitch-anim2 2.5s infinite linear alternate-reverse;
-        }
+    /* ── DIYA STRIP ── */
+    .diya-strip {
+      position: relative; z-index: 1;
+      display: flex; justify-content: center; flex-wrap: wrap; gap: .6rem;
+      padding: 1rem 1rem 2.5rem;
+    }
+    .diya {
+      font-size: clamp(1.6rem, 4.5vw, 2.4rem);
+      filter: drop-shadow(0 0 7px rgba(255,160,0,.7));
+      animation: flicker var(--d, 1.8s) ease-in-out infinite;
+      animation-delay: var(--off, 0s);
+    }
+    @keyframes flicker {
+      0%,100%{ filter: drop-shadow(0 0 7px rgba(255,160,0,.7)); transform: scale(1) rotate(-2deg); }
+      40%    { filter: drop-shadow(0 0 20px rgba(255,210,0,1)); transform: scale(1.1) rotate(2deg); }
+      70%    { filter: drop-shadow(0 0 5px rgba(255,100,0,.5)); transform: scale(.95); }
+    }
 
-        @keyframes glitch-anim {
-            0% { clip: rect(12px, 9999px, 81px, 0); transform: skew(0.2deg); }
-            5% { clip: rect(72px, 9999px, 34px, 0); transform: skew(0.1deg); }
-            10% { clip: rect(13px, 9999px, 91px, 0); transform: skew(0.5deg); }
-            15% { clip: rect(45px, 9999px, 23px, 0); transform: skew(0.8deg); }
-            20% { clip: rect(89px, 9999px, 56px, 0); transform: skew(0.3deg); }
-            25% { clip: rect(23px, 9999px, 12px, 0); transform: skew(0.5deg); }
-            30% { clip: rect(67px, 9999px, 78px, 0); transform: skew(0.1deg); }
-            35% { clip: rect(34px, 9999px, 45px, 0); transform: skew(0.9deg); }
-            40% { clip: rect(91px, 9999px, 67px, 0); transform: skew(0.4deg); }
-            45% { clip: rect(12px, 9999px, 89px, 0); transform: skew(0.2deg); }
-            50% { clip: rect(56px, 9999px, 23px, 0); transform: skew(0.6deg); }
-            55% { clip: rect(78px, 9999px, 12px, 0); transform: skew(0.8deg); }
-            60% { clip: rect(34px, 9999px, 45px, 0); transform: skew(0.1deg); }
-            65% { clip: rect(89px, 9999px, 67px, 0); transform: skew(0.5deg); }
-            70% { clip: rect(23px, 9999px, 89px, 0); transform: skew(0.3deg); }
-            75% { clip: rect(67px, 9999px, 12px, 0); transform: skew(0.9deg); }
-            80% { clip: rect(12px, 9999px, 45px, 0); transform: skew(0.4deg); }
-            85% { clip: rect(45px, 9999px, 78px, 0); transform: skew(0.2deg); }
-            90% { clip: rect(89px, 9999px, 23px, 0); transform: skew(0.6deg); }
-            95% { clip: rect(23px, 9999px, 56px, 0); transform: skew(0.8deg); }
-            100% { clip: rect(67px, 9999px, 89px, 0); transform: skew(0.1deg); }
-        }
+    /* ── WISH CARDS ── */
+    .wishes {
+      position: relative; z-index: 1;
+      max-width: 1040px; margin: 0 auto;
+      padding: 3rem 1.5rem 2rem;
+    }
+    .wishes h2 {
+      font-family: 'Yatra One', cursive;
+      font-size: clamp(1.6rem, 4vw, 2.8rem);
+      text-align: center;
+      background: linear-gradient(90deg, var(--gold), var(--saffron));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+      margin-bottom: 2.5rem;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.4rem;
+    }
+    .card {
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,184,0,.15);
+      border-radius: 14px; padding: 1.8rem 1.5rem;
+      opacity: 0; transform: translateY(24px);
+      transition: transform .3s, box-shadow .3s, border-color .3s;
+    }
+    .card.show { animation: up .6s ease forwards; }
+    .card:hover {
+      transform: translateY(-6px);
+      border-color: rgba(255,184,0,.4);
+      box-shadow: 0 16px 40px rgba(255,122,0,.18);
+    }
+    .card-icon { font-size: 2rem; margin-bottom: .6rem; }
+    .card h3 {
+      font-family: 'Yatra One', cursive;
+      font-size: 1.1rem; color: var(--gold); margin-bottom: .45rem;
+    }
+    .card p { font-size: .88rem; font-weight: 300; color: var(--muted); line-height: 1.75; }
 
-        @keyframes glitch-anim2 {
-            0% { clip: rect(65px, 9999px, 100px, 0); transform: skew(0.8deg); }
-            5% { clip: rect(2px, 9999px, 54px, 0); transform: skew(0.3deg); }
-            10% { clip: rect(83px, 9999px, 11px, 0); transform: skew(0.5deg); }
-            15% { clip: rect(35px, 9999px, 83px, 0); transform: skew(0.2deg); }
-            20% { clip: rect(99px, 9999px, 36px, 0); transform: skew(0.9deg); }
-            25% { clip: rect(13px, 9999px, 62px, 0); transform: skew(0.4deg); }
-            30% { clip: rect(57px, 9999px, 98px, 0); transform: skew(0.6deg); }
-            35% { clip: rect(24px, 9999px, 15px, 0); transform: skew(0.1deg); }
-            40% { clip: rect(81px, 9999px, 57px, 0); transform: skew(0.8deg); }
-            45% { clip: rect(12px, 9999px, 89px, 0); transform: skew(0.3deg); }
-            50% { clip: rect(66px, 9999px, 23px, 0); transform: skew(0.5deg); }
-            55% { clip: rect(78px, 9999px, 12px, 0); transform: skew(0.2deg); }
-            60% { clip: rect(34px, 9999px, 45px, 0); transform: skew(0.9deg); }
-            65% { clip: rect(89px, 9999px, 67px, 0); transform: skew(0.4deg); }
-            70% { clip: rect(23px, 9999px, 89px, 0); transform: skew(0.6deg); }
-            75% { clip: rect(67px, 9999px, 12px, 0); transform: skew(0.1deg); }
-            80% { clip: rect(12px, 9999px, 45px, 0); transform: skew(0.8deg); }
-            85% { clip: rect(45px, 9999px, 78px, 0); transform: skew(0.3deg); }
-            90% { clip: rect(89px, 9999px, 23px, 0); transform: skew(0.5deg); }
-            95% { clip: rect(23px, 9999px, 56px, 0); transform: skew(0.2deg); }
-            100% { clip: rect(67px, 9999px, 89px, 0); transform: skew(0.9deg); }
-        }
+    /* ── BIG QUOTE ── */
+    .quote-section {
+      position: relative; z-index: 1;
+      text-align: center; padding: 4rem 2rem 3rem;
+      max-width: 680px; margin: 0 auto;
+    }
+    .quote-mark { font-size: 5rem; line-height: .5; color: var(--saffron); opacity: .3; font-family: Georgia, serif; }
+    .quote-text {
+      font-family: 'Poppins', sans-serif; font-style: italic;
+      font-size: clamp(1.1rem, 2.8vw, 1.6rem); font-weight: 300;
+      color: var(--cream); line-height: 1.7; margin: .5rem 0 1.2rem;
+    }
+    .quote-text strong {
+      font-style: normal; font-weight: 600;
+      background: linear-gradient(90deg, var(--gold), var(--saffron));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .quote-from { font-size: .85rem; color: var(--muted); }
 
-        h1.subtitle {
-            font-family: 'Bangers', cursive;
-            font-size: 3rem;
-            letter-spacing: 2px;
-            color: var(--white);
-            text-shadow: 2px 2px 0px var(--neon-pink), -2px -2px 0px var(--electric-blue);
-            transform: rotate(-2deg);
-        }
+    /* ── MARIGOLD BANNER ── */
+    .marigold-banner {
+      position: relative; z-index: 1;
+      display: flex; justify-content: center; flex-wrap: wrap;
+      gap: .3rem; padding: .5rem 1rem 3rem;
+      font-size: clamp(1.4rem, 4vw, 2.2rem);
+    }
+    .petal {
+      display: inline-block;
+      animation: petalWave var(--pw, 2s) ease-in-out infinite;
+      animation-delay: var(--pd, 0s);
+    }
+    @keyframes petalWave {
+      0%,100%{ transform: translateY(0) rotate(-5deg); }
+      50%    { transform: translateY(-10px) rotate(5deg); }
+    }
 
-        /* Stylized Gwen Stacy Character */
-        .character-container {
-            position: relative;
-            width: 200px;
-            height: 200px;
-            animation: float 4s ease-in-out infinite;
-            filter: drop-shadow(0 0 15px rgba(0, 242, 255, 0.5));
-            margin: 1rem 0;
-        }
+    /* ── CAKE SECTION ── */
+    .cake-section {
+      position: relative; z-index: 1;
+      text-align: center; padding: 1rem 2rem 5rem;
+    }
+    .cake-emoji {
+      font-size: clamp(5rem, 15vw, 9rem); display: inline-block;
+      animation: cakePulse 2.5s ease-in-out infinite;
+      cursor: pointer; user-select: none;
+    }
+    @keyframes cakePulse {
+      0%,100%{ transform: scale(1) rotate(-2deg); }
+      50%    { transform: scale(1.07) rotate(2deg); }
+    }
+    .cake-label {
+      font-family: 'Yatra One', cursive;
+      font-size: clamp(1.1rem, 3vw, 1.8rem);
+      color: var(--gold); margin-top: .8rem;
+    }
+    .cake-sub { font-size: .8rem; color: var(--muted); margin-top: .3rem; }
 
-        .spider-web-line {
-            position: absolute;
-            top: -150px;
-            left: 50%;
-            width: 2px;
-            height: 200px;
-            background: linear-gradient(to bottom, transparent, var(--white));
-            transform: translateX(-50%);
-            z-index: -1;
-        }
+    /* ── FOOTER ── */
+    footer {
+      position: relative; z-index: 1;
+      text-align: center; padding: 2.5rem 1.5rem;
+      border-top: 1px solid rgba(255,184,0,.1);
+      font-size: .8rem; color: rgba(255,248,238,.28);
+    }
+    footer span { color: var(--saffron); }
 
-        @keyframes float {
-            0% { transform: translateY(0px) rotate(0deg); }
-            50% { transform: translateY(-20px) rotate(3deg); }
-            100% { transform: translateY(0px) rotate(0deg); }
-        }
+    /* ── MUSIC BAR ── */
+    .music-bar {
+      display: flex; align-items: center; gap: 1rem;
+      margin: 1.2rem auto 0;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,184,0,.2);
+      border-radius: 50px;
+      padding: .6rem 1.2rem;
+      max-width: 340px;
+      opacity: 0; transform: translateY(10px);
+      transition: opacity .5s, transform .5s;
+    }
+    .music-bar.visible { opacity: 1; transform: translateY(0); }
+    .music-btn {
+      background: var(--saffron); border: none; border-radius: 50%;
+      width: 36px; height: 36px; font-size: 1rem;
+      cursor: pointer; color: white; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      transition: background .2s, transform .15s;
+    }
+    .music-btn:hover { background: var(--gold); transform: scale(1.1); }
+    .music-info { flex: 1; min-width: 0; }
+    .music-title { font-size: .78rem; color: var(--gold); display: block; margin-bottom: .3rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .music-progress-wrap { background: rgba(255,255,255,.1); border-radius: 4px; height: 4px; }
+    .music-progress { background: linear-gradient(90deg, var(--saffron), var(--gold)); height: 4px; border-radius: 4px; width: 0%; transition: width .5s linear; }
+    .music-time { font-size: .72rem; color: var(--muted); flex-shrink: 0; }
 
-        /* Glassmorphism Message Box */
-        .glass-card {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-right: 1px solid rgba(0, 242, 255, 0.4);
-            border-bottom: 1px solid rgba(255, 0, 127, 0.4);
-            border-radius: 20px;
-            padding: 2.5rem;
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37), 
-                        inset 0 0 20px rgba(0, 242, 255, 0.1);
-            position: relative;
-            overflow: hidden;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
+    /* ANIMATIONS */
+    @keyframes up   { from{opacity:0;transform:translateY(18px)} to{opacity:1;transform:translateY(0)} }
+    @keyframes fadeIn{ from{opacity:0} to{opacity:1} }
 
-        .glass-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 40px 0 rgba(0, 0, 0, 0.5), 
-                        inset 0 0 30px rgba(255, 0, 127, 0.2);
-        }
-
-        /* Birthday Balloons */
-        .balloons-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            pointer-events: none;
-            z-index: 0;
-            overflow: hidden;
-        }
-
-        .balloon {
-            position: absolute;
-            bottom: -150px;
-            width: 50px;
-            height: 65px;
-            border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
-            opacity: 0.7;
-            animation: floatUp 12s infinite ease-in;
-            box-shadow: inset -5px -5px 15px rgba(0,0,0,0.3);
-        }
-
-        .balloon::before {
-            content: "";
-            position: absolute;
-            bottom: -50px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 2px;
-            height: 50px;
-            background: rgba(255, 255, 255, 0.3);
-        }
-
-        .balloon.pink1 { background: var(--neon-pink); box-shadow: 0 0 20px var(--neon-pink); left: 15%; animation-duration: 14s; }
-        .balloon.blue1 { background: var(--electric-blue); box-shadow: 0 0 20px var(--electric-blue); left: 85%; animation-duration: 11s; animation-delay: 2s; }
-        .balloon.purple1 { background: var(--deep-purple); box-shadow: 0 0 20px var(--deep-purple); left: 50%; animation-duration: 16s; animation-delay: 5s; }
-        .balloon.pink2 { background: var(--neon-pink); box-shadow: 0 0 20px var(--neon-pink); left: 70%; animation-duration: 13s; animation-delay: 7s; }
-        .balloon.blue2 { background: var(--electric-blue); box-shadow: 0 0 20px var(--electric-blue); left: 30%; animation-duration: 15s; animation-delay: 4s; }
-
-        @keyframes floatUp {
-            0% { transform: translateY(0) rotate(0deg); }
-            50% { transform: translateY(-60vh) rotate(15deg); }
-            100% { transform: translateY(-120vh) rotate(-15deg); }
-        }
-
-        /* Interactive Cake */
-        .interactive-cake {
-            font-size: 3rem;
-            margin-top: 1rem;
-            cursor: pointer;
-            transition: transform 0.2s, filter 0.2s;
-            display: inline-block;
-            filter: drop-shadow(0 0 10px rgba(255, 0, 127, 0.8));
-            animation: pulse 2s infinite;
-        }
-
-        .interactive-cake:hover {
-            transform: scale(1.2) rotate(-5deg);
-            filter: drop-shadow(0 0 20px rgba(0, 242, 255, 0.9));
-        }
-
-        .cake-text {
-            display: block;
-            font-size: 0.9rem;
-            color: var(--electric-blue);
-            margin-top: 5px;
-            letter-spacing: 1px;
-            text-shadow: none;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-
-        .glass-card::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%);
-            opacity: 0;
-            transition: opacity 0.5s;
-            pointer-events: none;
-        }
-
-        .glass-card:hover::before {
-            opacity: 1;
-        }
-
-        .message-text {
-            font-size: 1.2rem;
-            line-height: 1.8;
-            font-weight: 400;
-            letter-spacing: 1px;
-            text-align: left;
-            position: relative;
-            z-index: 1;
-        }
-
-        .message-text span.highlight {
-            color: var(--neon-pink);
-            font-weight: 700;
-            text-shadow: 0 0 10px rgba(255, 0, 127, 0.6);
-        }
-
-        .message-text span.highlight-blue {
-            color: var(--electric-blue);
-            font-weight: 700;
-            text-shadow: 0 0 10px rgba(0, 242, 255, 0.6);
-        }
-
-        /* Music Player Button */
-        .music-player {
-            margin-top: 1rem;
-            z-index: 20;
-        }
-
-        .btn-play {
-            background: transparent;
-            color: var(--white);
-            font-family: 'Orbitron', sans-serif;
-            font-weight: 900;
-            font-size: 1.1rem;
-            padding: 1rem 2rem;
-            border: 2px solid var(--electric-blue);
-            border-radius: 50px;
-            cursor: pointer;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            position: relative;
-            overflow: hidden;
-            transition: all 0.3s ease;
-            box-shadow: 0 0 15px rgba(0, 242, 255, 0.3), inset 0 0 10px rgba(0, 242, 255, 0.1);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .btn-play::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 0, 127, 0.4), transparent);
-            transition: left 0.5s ease;
-            z-index: -1;
-        }
-
-        .btn-play:hover {
-            border-color: var(--neon-pink);
-            box-shadow: 0 0 20px rgba(255, 0, 127, 0.5), inset 0 0 15px rgba(255, 0, 127, 0.2);
-            text-shadow: 0 0 5px var(--white);
-            transform: scale(1.05);
-        }
-
-        .btn-play:hover::before {
-            left: 100%;
-        }
-
-        .icon-play {
-            display: inline-block;
-            width: 0;
-            height: 0;
-            border-style: solid;
-            border-width: 8px 0 8px 14px;
-            border-color: transparent transparent transparent var(--white);
-            transition: all 0.3s;
-        }
-
-        .btn-play.playing .icon-play {
-            border-style: double;
-            border-width: 0 0 0 14px;
-            height: 16px;
-        }
-
-        /* Responsive */
-        @media (max-width: 600px) {
-            .glitch { font-size: 6rem; }
-            h1.subtitle { font-size: 2.2rem; }
-            .glass-card { padding: 1.5rem; }
-            .message-text { font-size: 1rem; }
-            .character-container { width: 150px; height: 150px; }
-            .spider-web-line { height: 150px; top: -110px; }
-            .balloon { width: 35px; height: 45px; }
-        }
-    </style>
+    /* click sparkle */
+    .pop { position:fixed; pointer-events:none; z-index:5; font-size:1.3rem; animation:popUp .7s ease forwards; }
+    @keyframes popUp {
+      0%  {opacity:1;transform:scale(0) translateY(0)}
+      60% {opacity:1;transform:scale(1.3) translateY(-20px)}
+      100%{opacity:0;transform:scale(.8) translateY(-42px)}
+    }
+  </style>
 </head>
 <body>
 
-    <!-- Background Effects -->
-    <div class="halftone-bg"></div>
-    <canvas id="web-canvas"></canvas>
-    
-    <!-- Neon Birthday Balloons -->
-    <div class="balloons-container">
-        <div class="balloon pink1"></div>
-        <div class="balloon blue1"></div>
-        <div class="balloon purple1"></div>
-        <div class="balloon pink2"></div>
-        <div class="balloon blue2"></div>
+<canvas id="spark-canvas"></canvas>
+<canvas id="burst-canvas"></canvas>
+
+<!-- HERO -->
+<section class="hero">
+  <p class="tag">✦ Today is all about you ✦</p>
+  <h1 class="hero-name">Komal</h1>
+  <p class="hero-hb">🎉 Happy Birthday! 🎉</p>
+  <div class="divider"><span>🌼</span></div>
+  <p class="hero-msg">
+    Wishing you a day as bright, warm,<br>and wonderful as you are!
+  </p>
+  <div class="arrow">↓</div>
+</section>
+
+<!-- DIYAS -->
+<div class="diya-strip" id="diyaStrip"></div>
+
+<!-- CARDS -->
+<section class="wishes">
+  <h2>Here's to You, Komal 🌸</h2>
+  <div class="grid">
+    <div class="card">
+      <div class="card-icon">🌼</div>
+      <h3>Joy Every Day</h3>
+      <p>May your days be filled with little moments that make you smile from ear to ear.</p>
     </div>
-
-    <!-- Hidden Audio Element -->
-    <!-- Updated with a working, upbeat royalty-free hip-hop track -->
-    <audio id="bgm" loop crossorigin="anonymous">
-        <source src="song.mp3" type="audio/mpeg">
-        Your browser does not support the audio element.
-    </audio>
-
-    <div class="container">
-        <!-- Header -->
-        <div class="glitch-container">
-            <div class="glitch" data-text="17">17</div>
-        </div>
-        <h1 class="subtitle">Happy Birthday!</h1>
-
-        <!-- Stylized Character (SVG inline to ensure it always loads) -->
-        <div class="character-container" id="gwen-character">
-            <div class="spider-web-line"></div>
-            <!-- Abstract Cyberpunk/Spider-Gwen Vector Silhouette -->
-            <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-                <defs>
-                    <linearGradient id="gwen-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" stop-color="#ffffff" />
-                        <stop offset="50%" stop-color="#e0e0e0" />
-                        <stop offset="100%" stop-color="#cccccc" />
-                    </linearGradient>
-                    <filter id="chromatic">
-                        <feOffset dx="3" dy="0" in="SourceGraphic" result="red-shift" />
-                        <feColorMatrix type="matrix" values="1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.7 0" in="red-shift" result="red" />
-                        <feOffset dx="-3" dy="0" in="SourceGraphic" result="blue-shift" />
-                        <feColorMatrix type="matrix" values="0 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.7 0" in="blue-shift" result="blue" />
-                        <feMerge>
-                            <feMergeNode in="red" />
-                            <feMergeNode in="blue" />
-                            <feMergeNode in="SourceGraphic" />
-                        </feMerge>
-                    </filter>
-                </defs>
-                <g filter="url(#chromatic)">
-                    <!-- Hood & Head -->
-                    <path d="M100 20 C 70 20, 60 50, 70 80 C 80 110, 120 110, 130 80 C 140 50, 130 20, 100 20 Z" fill="url(#gwen-grad)"/>
-                    <!-- Eye Accents (Pink/Blue) -->
-                    <path d="M 85 60 Q 95 55 95 65 Q 90 70 80 65 Q 75 60 85 60 Z" fill="#ff007f"/>
-                    <path d="M 115 60 Q 105 55 105 65 Q 110 70 120 65 Q 125 60 115 60 Z" fill="#ff007f"/>
-                    <!-- Body Dynamic Pose -->
-                    <path d="M 85 100 L 60 140 L 70 190 L 95 150 L 105 150 L 130 190 L 140 140 L 115 100 Z" fill="url(#gwen-grad)"/>
-                    <!-- Arm swinging -->
-                    <path d="M 75 110 L 40 80 L 30 90 L 65 125 Z" fill="#00f2ff"/>
-                    <path d="M 125 110 L 160 80 L 170 90 L 135 125 Z" fill="#00f2ff"/>
-                </g>
-            </svg>
-        </div>
-
-        <!-- Message Box -->
-        <div class="glass-card">
-            <p class="message-text">
-                <span class="highlight">Happy 17th Birthday!</span><br><br>
-                Apologies for being a little late. I got too swamped with stuff and <span class="highlight-blue">time zones</span> are a real bitch.<br><br>
-                Love ya!
-            </p>
-            
-            <!-- Interactive Birthday Cake -->
-            <div class="interactive-cake" onclick="makeWish(this)" title="Click to make a wish!">
-                🎂
-                <span class="cake-text">Tap to make a wish!</span>
-            </div>
-        </div>
-
-        <!-- Audio Control -->
-        <div class="music-player">
-            <button class="btn-play" id="playBtn" onclick="toggleAudio()">
-                <span class="icon-play"></span>
-                <span id="playText">Play Birthday Beats</span>
-            </button>
-        </div>
+    <div class="card">
+      <div class="card-icon">✨</div>
+      <h3>Big Dreams</h3>
+      <p>Here's to all the things you've been working towards — may this year be the one they come true.</p>
     </div>
+    <div class="card">
+      <div class="card-icon">💪</div>
+      <h3>Good Health</h3>
+      <p>Wishing you energy, strength, and health to do everything you love, every single day.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">🌺</div>
+      <h3>Great Adventures</h3>
+      <p>May this year bring exciting new experiences, places to explore, and memories to cherish.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">🤝</div>
+      <h3>Wonderful People</h3>
+      <p>May you always be surrounded by people who appreciate how amazing you truly are.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">🪔</div>
+      <h3>Inner Peace</h3>
+      <p>Like a steady diya flame, may you always find your calm and your light, no matter what.</p>
+    </div>
+  </div>
+</section>
 
-    <script>
-        // --- 1. Confetti Effect on Load ---
-        window.addEventListener('load', () => {
-            // Spider-Verse color palette confetti
-            const duration = 3000;
-            const end = Date.now() + duration;
+<!-- QUOTE -->
+<div class="quote-section">
+  <div class="quote-mark">"</div>
+  <p class="quote-text">
+    Another year older, another year of being
+    <strong>absolutely brilliant</strong> — keep going, Komal,
+    the best is still ahead of you.
+  </p>
+  <p class="quote-from">— your friend, wishing you all the best 🙏</p>
+</div>
 
-            (function frame() {
-                confetti({
-                    particleCount: 5,
-                    angle: 60,
-                    spread: 55,
-                    origin: { x: 0, y: 0.8 },
-                    colors: ['#ff007f', '#00f2ff', '#ffffff', '#2d004d']
-                });
-                confetti({
-                    particleCount: 5,
-                    angle: 120,
-                    spread: 55,
-                    origin: { x: 1, y: 0.8 },
-                    colors: ['#ff007f', '#00f2ff', '#ffffff', '#2d004d']
-                });
+<!-- MARIGOLD BANNER -->
+<div class="marigold-banner" id="marigoldBanner"></div>
 
-                if (Date.now() < end) {
-                    requestAnimationFrame(frame);
-                }
-            }());
-        });
+<!-- CAKE -->
+<div class="cake-section">
+  <div class="cake-emoji" id="cake">🎂</div>
+  <p class="cake-label">Make a wish! 🕯️</p>
+  <p class="cake-sub">(tap the cake to play music & shoot confetti!)</p>
+  <div class="music-bar" id="musicBar">
+    <button class="music-btn" id="musicBtn" title="Play / Pause">▶</button>
+    <div class="music-info">
+      <span class="music-title">Happy Birthday 🎵</span>
+      <div class="music-progress-wrap">
+        <div class="music-progress" id="musicProgress"></div>
+      </div>
+    </div>
+    <span class="music-time" id="musicTime">0:00</span>
+  </div>
+</div>
 
-        // --- 2. Audio Player Logic ---
-        const audio = document.getElementById('bgm');
-        const playBtn = document.getElementById('playBtn');
-        const playText = document.getElementById('playText');
-        let isPlaying = false;
+<!-- FOOTER -->
+<footer>
+  Made with <span>♥</span> for Komal &nbsp;•&nbsp; Happy Birthday! 🎉
+</footer>
 
-        audio.volume = 0.5; // Set starting volume
+<script>
+/* ── Floating spark particles ── */
+const sc = document.getElementById('spark-canvas'), sctx = sc.getContext('2d');
+sc.width = window.innerWidth; sc.height = window.innerHeight;
+window.addEventListener('resize', () => { sc.width = window.innerWidth; sc.height = window.innerHeight; });
 
-        function toggleAudio() {
-            if (isPlaying) {
-                audio.pause();
-                playBtn.classList.remove('playing');
-                playText.innerText = 'Play Birthday Beats';
-            } else {
-                audio.play().catch(e => console.log("Audio play failed (browser policy):", e));
-                playBtn.classList.add('playing');
-                playText.innerText = 'Pause Beats';
-                
-                // Extra click burst confetti
-                confetti({
-                    particleCount: 50,
-                    spread: 80,
-                    origin: { y: 0.9 },
-                    colors: ['#ff007f', '#00f2ff']
-                });
-            }
-            isPlaying = !isPlaying;
-        }
+const particles = Array.from({length: 70}, () => ({
+  x: Math.random() * window.innerWidth,
+  y: Math.random() * window.innerHeight,
+  r: .6 + Math.random() * 2,
+  c: ['#FFB800','#FF7A00','#FFD966','#FFF8EE'][Math.floor(Math.random()*4)],
+  vx: (Math.random()-.5)*.2,
+  vy: -.12 - Math.random()*.28,
+  life: Math.random(), max: .5 + Math.random()*.5
+}));
 
-        // --- 2.5 Make a Wish Interaction ---
-        function makeWish(element) {
-            element.querySelector('.cake-text').innerText = "Wish granted! ✨";
-            element.style.animation = "none"; // Stop pulsing
-            element.style.transform = "scale(1.2)";
-            
-            // Massive Birthday Confetti Explosion
-            var duration = 2000;
-            var animationEnd = Date.now() + duration;
-            var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 100 };
+(function loop() {
+  sctx.clearRect(0, 0, sc.width, sc.height);
+  particles.forEach(p => {
+    p.x += p.vx; p.y += p.vy; p.life += .005;
+    if (p.life > p.max || p.y < -5) { p.y = sc.height + 5; p.x = Math.random()*sc.width; p.life = 0; }
+    const a = Math.sin(p.life/p.max*Math.PI) * .65;
+    sctx.beginPath(); sctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+    sctx.fillStyle = p.c; sctx.globalAlpha = a; sctx.fill(); sctx.globalAlpha = 1;
+  });
+  requestAnimationFrame(loop);
+})();
 
-            function randomInRange(min, max) {
-                return Math.random() * (max - min) + min;
-            }
+/* ── Diya strip ── */
+const ds = document.getElementById('diyaStrip');
+for (let i = 0; i < 11; i++) {
+  const d = document.createElement('div'); d.className = 'diya'; d.textContent = '🪔';
+  d.style.setProperty('--d', (1.4+Math.random()*.9)+'s');
+  d.style.setProperty('--off', (i*.13)+'s');
+  ds.appendChild(d);
+}
 
-            var interval = setInterval(function() {
-                var timeLeft = animationEnd - Date.now();
+/* ── Marigold banner ── */
+const mb = document.getElementById('marigoldBanner');
+const flowers = ['🌼','🌸','🌺','🌻','🪷'];
+for (let i = 0; i < 18; i++) {
+  const el = document.createElement('span'); el.className = 'petal';
+  el.textContent = flowers[i % flowers.length];
+  el.style.setProperty('--pw', (1.6+Math.random()*1.2)+'s');
+  el.style.setProperty('--pd', (i*.08)+'s');
+  mb.appendChild(el);
+}
 
-                if (timeLeft <= 0) {
-                    return clearInterval(interval);
-                }
+/* ── Scroll reveal cards ── */
+const cards = document.querySelectorAll('.card');
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      const i = [...cards].indexOf(e.target);
+      setTimeout(() => e.target.classList.add('show'), i * 100);
+      obs.unobserve(e.target);
+    }
+  });
+}, { threshold: .1 });
+cards.forEach(c => obs.observe(c));
 
-                var particleCount = 50 * (timeLeft / duration);
-                
-                confetti(Object.assign({}, defaults, { 
-                    particleCount, 
-                    origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 },
-                    colors: ['#ff007f', '#00f2ff', '#ffffff']
-                }));
-                confetti(Object.assign({}, defaults, { 
-                    particleCount, 
-                    origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 },
-                    colors: ['#ff007f', '#00f2ff', '#2d004d']
-                }));
-            }, 250);
-        }
+/* ── Burst confetti ── */
+const bc = document.getElementById('burst-canvas'), bctx = bc.getContext('2d');
+bc.width = window.innerWidth; bc.height = window.innerHeight;
+window.addEventListener('resize', () => { bc.width = window.innerWidth; bc.height = window.innerHeight; });
+let confetti = [];
+const cColors = ['#FFB800','#FF7A00','#FF5733','#FFD966','#FFFFFF','#FF9F45'];
 
-        // --- 3. Interactive Spider-Web Canvas System ---
-        const canvas = document.getElementById('web-canvas');
-        const ctx = canvas.getContext('2d');
-        
-        let width, height;
-        let particles = [];
-        
-        // Mouse/Touch tracking
-        const mouse = { x: null, y: null, radius: 150 };
+function burst(x, y, n = 55) {
+  for (let i = 0; i < n; i++) {
+    const a = (i/n)*Math.PI*2;
+    const spd = 4 + Math.random()*8;
+    confetti.push({
+      x, y, vx: Math.cos(a)*spd, vy: Math.sin(a)*spd - 2,
+      w: 5+Math.random()*6, h: 3+Math.random()*4,
+      c: cColors[Math.floor(Math.random()*cColors.length)],
+      rot: Math.random()*360, rv: (Math.random()-.5)*9, life: 1
+    });
+  }
+}
 
-        function initCanvas() {
-            width = canvas.width = window.innerWidth;
-            height = canvas.height = window.innerHeight;
-            particles = [];
-            
-            // Adjust particle count based on screen size for performance
-            const numberOfParticles = (width * height) / 10000; 
-            
-            for (let i = 0; i < numberOfParticles; i++) {
-                particles.push(new Particle());
-            }
-        }
+(function loopBurst() {
+  bctx.clearRect(0, 0, bc.width, bc.height);
+  confetti = confetti.filter(p => p.life > 0);
+  confetti.forEach(p => {
+    p.x += p.vx; p.y += p.vy; p.vy += .28; p.rot += p.rv; p.life -= .02;
+    bctx.save(); bctx.translate(p.x, p.y); bctx.rotate(p.rot*Math.PI/180);
+    bctx.globalAlpha = Math.max(p.life, 0); bctx.fillStyle = p.c;
+    bctx.fillRect(-p.w/2, -p.h/2, p.w, p.h); bctx.restore();
+  });
+  requestAnimationFrame(loopBurst);
+})();
 
-        window.addEventListener('resize', initCanvas);
+/* ── Happy Birthday melody via Web Audio API ── */
+let audioCtx = null;
+let isPlaying = false;
+let songNodes = [];
+let songStart = 0;
+let songPaused = 0;
+let progressInterval = null;
 
-        // Track mouse/touch
-        window.addEventListener('mousemove', (e) => {
-            mouse.x = e.x;
-            mouse.y = e.y;
-        });
+// Happy Birthday to You — note frequencies (Hz) and durations (beats)
+const BPM = 200;
+const beat = 60 / BPM;
+const notes = {
+  C4:261.63, D4:293.66, E4:329.63, F4:349.23, G4:392.00,
+  A4:440.00, B4:493.88, C5:523.25, D5:587.33, E5:659.25,
+  F5:698.46, G5:783.99, A5:880.00
+};
+// [note, beats]  (0 = rest)
+const song = [
+  ['G4',.75],['G4',.25],['A4',1],['G4',1],['C5',1],['B4',2],
+  ['G4',.75],['G4',.25],['A4',1],['G4',1],['D5',1],['C5',2],
+  ['G4',.75],['G4',.25],['G5',1],['E5',1],['C5',1],['B4',1],['A4',2],
+  ['F5',.75],['F5',.25],['E5',1],['C5',1],['D5',1],['C5',2]
+];
+const totalBeats = song.reduce((s,[,b])=>s+b,0);
+const totalDuration = totalBeats * beat;
 
-        window.addEventListener('touchmove', (e) => {
-            mouse.x = e.touches[0].clientX;
-            mouse.y = e.touches[0].clientY;
-        });
+function playNote(ctx, freq, start, dur) {
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.connect(gain); gain.connect(ctx.destination);
+  osc.type = 'triangle';
+  osc.frequency.value = freq;
+  gain.gain.setValueAtTime(0, start);
+  gain.gain.linearRampToValueAtTime(.28, start + .01);
+  gain.gain.setValueAtTime(.28, start + dur - .05);
+  gain.gain.linearRampToValueAtTime(0, start + dur);
+  osc.start(start); osc.stop(start + dur);
+  return osc;
+}
 
-        window.addEventListener('mouseout', () => {
-            mouse.x = undefined;
-            mouse.y = undefined;
-        });
-        
-        window.addEventListener('touchend', () => {
-            mouse.x = undefined;
-            mouse.y = undefined;
-        });
+function startSong(offset = 0) {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  songNodes = [];
+  let t = audioCtx.currentTime + .05;
+  let cursor = 0;
+  song.forEach(([note, beats]) => {
+    const dur = beats * beat;
+    if (cursor >= offset && note !== '0') {
+      songNodes.push(playNote(audioCtx, notes[note], t + (cursor - offset), dur * .88));
+    }
+    cursor += dur;
+  });
+  songStart = audioCtx.currentTime - offset;
+  isPlaying = true;
+  document.getElementById('musicBtn').textContent = '⏸';
 
-        class Particle {
-            constructor() {
-                this.x = Math.random() * width;
-                this.y = Math.random() * height;
-                this.vx = (Math.random() - 0.5) * 1;
-                this.vy = (Math.random() - 0.5) * 1;
-                this.size = Math.random() * 2 + 1;
-                // Randomly assign Pink or Blue theme to particle
-                this.color = Math.random() > 0.5 ? '#00f2ff' : '#ff007f'; 
-            }
+  // auto-stop when done
+  const remaining = totalDuration - offset;
+  setTimeout(() => {
+    if (isPlaying) { stopSong(true); }
+  }, remaining * 1000 + 200);
 
-            update() {
-                this.x += this.vx;
-                this.y += this.vy;
+  // progress bar
+  clearInterval(progressInterval);
+  progressInterval = setInterval(() => {
+    const elapsed = audioCtx.currentTime - songStart;
+    const pct = Math.min((elapsed / totalDuration) * 100, 100);
+    document.getElementById('musicProgress').style.width = pct + '%';
+    const secs = Math.min(Math.floor(elapsed), Math.floor(totalDuration));
+    document.getElementById('musicTime').textContent =
+      Math.floor(secs/60)+':'+(secs%60<10?'0':'')+secs%60;
+    if (pct >= 100) clearInterval(progressInterval);
+  }, 300);
+}
 
-                // Bounce off edges
-                if (this.x < 0 || this.x > width) this.vx = -this.vx;
-                if (this.y < 0 || this.y > height) this.vy = -this.vy;
+function stopSong(finished = false) {
+  songNodes.forEach(n => { try { n.stop(); } catch(e){} });
+  songNodes = [];
+  isPlaying = false;
+  clearInterval(progressInterval);
+  document.getElementById('musicBtn').textContent = '▶';
+  if (finished) {
+    document.getElementById('musicProgress').style.width = '100%';
+    document.getElementById('musicTime').textContent =
+      Math.floor(totalDuration/60)+':'+(Math.floor(totalDuration)%60<10?'0':'')+Math.floor(totalDuration)%60;
+  } else {
+    songPaused = audioCtx ? audioCtx.currentTime - songStart : 0;
+  }
+}
 
-                // Mouse interactivity (web pulling effect)
-                if (mouse.x != null && mouse.y != null) {
-                    let dx = mouse.x - this.x;
-                    let dy = mouse.y - this.y;
-                    let distance = Math.sqrt(dx * dx + dy * dy);
-                    
-                    if (distance < mouse.radius) {
-                        // Subtle attraction to mouse
-                        const forceDirectionX = dx / distance;
-                        const forceDirectionY = dy / distance;
-                        const force = (mouse.radius - distance) / mouse.radius;
-                        
-                        this.vx += forceDirectionX * force * 0.05;
-                        this.vy += forceDirectionY * force * 0.05;
-                        
-                        // Apply friction to prevent infinite acceleration
-                        this.vx *= 0.98;
-                        this.vy *= 0.98;
-                    }
-                }
-            }
+document.getElementById('musicBtn').addEventListener('click', (e) => {
+  e.stopPropagation();
+  if (isPlaying) { stopSong(false); }
+  else {
+    const offset = Math.min(songPaused || 0, totalDuration - .1);
+    startSong(offset > 0 ? offset : 0);
+  }
+});
 
-            draw() {
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fillStyle = this.color;
-                ctx.fill();
-            }
-        }
+/* ── Cake ── */
+const cake = document.getElementById('cake');
+let blown = false;
+cake.addEventListener('click', () => {
+  // show music bar first time
+  document.getElementById('musicBar').classList.add('visible');
+  if (!blown) { cake.textContent = '🎆'; blown = true; }
+  else { cake.textContent = '🎂'; blown = false; }
+  burst(
+    cake.getBoundingClientRect().left + cake.offsetWidth/2,
+    cake.getBoundingClientRect().top,
+    80
+  );
+  // auto-play music on first tap
+  if (!isPlaying) {
+    songPaused = 0;
+    startSong(0);
+  }
+});
 
-        function animateCanvas() {
-            ctx.clearRect(0, 0, width, height);
-            
-            for (let i = 0; i < particles.length; i++) {
-                particles[i].update();
-                particles[i].draw();
-                
-                // Draw connecting webs
-                for (let j = i; j < particles.length; j++) {
-                    let dx = particles[i].x - particles[j].x;
-                    let dy = particles[i].y - particles[j].y;
-                    let distance = Math.sqrt(dx * dx + dy * dy);
-                    
-                    if (distance < 100) {
-                        ctx.beginPath();
-                        ctx.strokeStyle = `rgba(255, 255, 255, ${1 - distance/100})`;
-                        ctx.lineWidth = 0.5;
-                        ctx.moveTo(particles[i].x, particles[i].y);
-                        ctx.lineTo(particles[j].x, particles[j].y);
-                        ctx.stroke();
-                        ctx.closePath();
-                    }
-                }
-                
-                // Connect to mouse if close enough
-                if (mouse.x != null && mouse.y != null) {
-                    let dx = particles[i].x - mouse.x;
-                    let dy = particles[i].y - mouse.y;
-                    let distance = Math.sqrt(dx * dx + dy * dy);
-                    
-                    if (distance < mouse.radius) {
-                        ctx.beginPath();
-                        // Pink/Blue glowing line connecting to cursor
-                        ctx.strokeStyle = particles[i].color;
-                        ctx.globalAlpha = 1 - (distance / mouse.radius);
-                        ctx.lineWidth = 1.5;
-                        ctx.moveTo(particles[i].x, particles[i].y);
-                        ctx.lineTo(mouse.x, mouse.y);
-                        ctx.stroke();
-                        ctx.globalAlpha = 1.0; // Reset
-                        ctx.closePath();
-                    }
-                }
-            }
-            requestAnimationFrame(animateCanvas);
-        }
+/* ── Click pop ── */
+const pops = ['🎉','✨','🌸','🌼','🎊','💫','🪷'];
+document.addEventListener('click', e => {
+  burst(e.clientX, e.clientY, 18);
+  const el = document.createElement('div'); el.className = 'pop';
+  el.textContent = pops[Math.floor(Math.random()*pops.length)];
+  el.style.left = e.clientX+'px'; el.style.top = e.clientY+'px';
+  document.body.appendChild(el); setTimeout(() => el.remove(), 700);
+});
 
-        // Initialize and start animation
-        initCanvas();
-        animateCanvas();
-
-        // Extra web burst on click anywhere
-        window.addEventListener('click', (e) => {
-            // Ignore if clicking the button
-            if(e.target.closest('.btn-play')) return;
-            
-            const burstCount = 10;
-            for(let i=0; i<burstCount; i++) {
-                let p = new Particle();
-                p.x = e.clientX;
-                p.y = e.clientY;
-                // Explode outwards
-                p.vx = (Math.random() - 0.5) * 10;
-                p.vy = (Math.random() - 0.5) * 10;
-                particles.push(p);
-            }
-            // Remove particles after a while to prevent lag
-            setTimeout(() => {
-                particles.splice(particles.length - burstCount, burstCount);
-            }, 2000);
-        });
-
-    </script>
+/* ── Entry burst ── */
+setTimeout(() => burst(window.innerWidth/2, window.innerHeight/2, 60), 1800);
+</script>
 </body>
 </html>
